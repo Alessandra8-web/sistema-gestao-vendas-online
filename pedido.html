@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pedidos - Gestão de Vendas</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f4f6f8;
+            color: #222;
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .menu {
+            width: 230px;
+            background: #17177a;
+            color: white;
+            padding: 30px 20px;
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .logo span {
+            font-size: 35px;
+        }
+
+        .logo h2 {
+            font-size: 18px;
+            margin-top: 8px;
+        }
+
+        .menu nav a {
+            display: block;
+            color: white;
+            text-decoration: none;
+            padding: 14px;
+            margin-bottom: 8px;
+            border-radius: 6px;
+        }
+
+        .menu nav a:hover,
+        .menu nav a.ativo {
+            background: rgba(255,255,255,0.15);
+        }
+
+        .conteudo {
+            flex: 1;
+            padding: 35px;
+        }
+
+        .cabecalho {
+            margin-bottom: 30px;
+        }
+
+        .cabecalho h1 {
+            color: #17177a;
+            margin-bottom: 5px;
+        }
+
+        .box {
+            max-width: 900px;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+        }
+
+        .box h2 {
+            margin-bottom: 25px;
+        }
+
+        .linha {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .campo {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 7px;
+            font-weight: bold;
+            color: #444;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 13px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 15px;
+            background: white;
+        }
+
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: #17177a;
+        }
+
+        .botao {
+            padding: 13px 22px;
+            border: none;
+            background: #17177a;
+            color: white;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .botao:hover {
+            background: #0e0e58;
+        }
+
+        .mensagem {
+            display: none;
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            background: #e9f8ed;
+            color: #18752c;
+            font-weight: bold;
+        }
+
+        @media (max-width: 800px) {
+            .container {
+                display: block;
+            }
+
+            .menu {
+                width: 100%;
+            }
+
+            .linha {
+                grid-template-columns: 1fr;
+                gap: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <aside class="menu">
+
+        <div class="logo">
+            <span>🔊</span>
+            <h2>Gestão de Vendas</h2>
+        </div>
+
+        <nav>
+            <a href="dashboard.html">🏠 Dashboard</a>
+            <a href="pedido.html" class="ativo">🛒 Pedidos</a>
+            <a href="#">📦 Produtos</a>
+            <a href="relatorios.html">📊 Relatórios</a>
+            <a href="index.html">🚪 Sair</a>
+        </nav>
+
+    </aside>
+
+    <main class="conteudo">
+
+        <header class="cabecalho">
+            <h1>Pedidos</h1>
+            <p>Registre um novo pedido de venda</p>
+        </header>
+
+        <section class="box">
+
+            <h2>Novo Pedido</h2>
+
+            <form id="formPedido">
+
+                <div class="campo">
+                    <label for="cliente">Cliente</label>
+
+                    <select id="cliente" required>
+                        <option value="">Selecione o cliente</option>
+                        <option>Maria Silva</option>
+                        <option>João Santos</option>
+                        <option>Ana Souza</option>
+                    </select>
+                </div>
+
+                <div class="campo">
+                    <label for="produto">Produto</label>
+
+                    <select id="produto" required>
+                        <option value="">Selecione o produto</option>
+                        <option value="89.90">Caixinha de Som Mini - R$ 89,90</option>
+                        <option value="120.00">Caixinha de Som Bluetooth - R$ 120,00</option>
+                        <option value="150.00">Caixinha de Som Pro - R$ 150,00</option>
+                    </select>
+                </div>
+
+                <div class="linha">
+
+                    <div class="campo">
+                        <label for="quantidade">Quantidade</label>
+
+                        <input
+                            type="number"
+                            id="quantidade"
+                            min="1"
+                            value="1"
+                            required
+                        >
+                    </div>
+
+                    <div class="campo">
+                        <label for="valor">Valor total</label>
+
+                        <input
+                            type="text"
+                            id="valor"
+                            value="R$ 0,00"
+                            readonly
+                        >
+                    </div>
+
+                </div>
+
+                <div class="campo">
+                    <label for="pagamento">Forma de pagamento</label>
+
+                    <select id="pagamento" required>
+                        <option value="">Selecione a forma de pagamento</option>
+                        <option>PIX</option>
+                        <option>Transferência Bancária</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="botao">
+                    Registrar Pedido
+                </button>
+
+                <div class="mensagem" id="mensagem">
+                    Pedido registrado com sucesso!
+                </div>
+
+            </form>
+
+        </section>
+
+    </main>
+
+</div>
+
+<script>
+    const produto = document.getElementById("produto");
+    const quantidade = document.getElementById("quantidade");
+    const valor = document.getElementById("valor");
+    const formulario = document.getElementById("formPedido");
+    const mensagem = document.getElementById("mensagem");
+
+    function calcularTotal() {
+        const preco = Number(produto.value);
+        const qtd = Number(quantidade.value);
+
+        const total = preco * qtd;
+
+        valor.value = total.toLocaleString(
+            "pt-BR",
+            {
+                style: "currency",
+                currency: "BRL"
+            }
+        );
+    }
+
+    produto.addEventListener("change", calcularTotal);
+    quantidade.addEventListener("input", calcularTotal);
+
+    formulario.addEventListener("submit", function(event) {
+        event.preventDefault();
+
+        calcularTotal();
+
+        mensagem.style.display = "block";
+    });
+</script>
+
+</body>
+</html>
