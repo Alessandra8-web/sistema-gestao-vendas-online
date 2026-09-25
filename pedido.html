@@ -198,9 +198,7 @@
 
                     <select id="cliente" required>
                         <option value="">Selecione o cliente</option>
-                        <option>Maria Silva</option>
-                        <option>João Santos</option>
-                        <option>Ana Souza</option>
+
                     </select>
                 </div>
 
@@ -209,9 +207,7 @@
 
                     <select id="produto" required>
                         <option value="">Selecione o produto</option>
-                        <option value="89.90">Caixinha de Som Mini - R$ 89,90</option>
-                        <option value="120.00">Caixinha de Som Bluetooth - R$ 120,00</option>
-                        <option value="150.00">Caixinha de Som Pro - R$ 150,00</option>
+
                     </select>
                 </div>
 
@@ -269,14 +265,56 @@
 </div>
 
 <script>
-    const produto = document.getElementById("produto");
-    const quantidade = document.getElementById("quantidade");
-    const valor = document.getElementById("valor");
-    const formulario = document.getElementById("formPedido");
-    const mensagem = document.getElementById("mensagem");
+const cliente = document.getElementById("cliente");
+const produto = document.getElementById("produto");
+const quantidade = document.getElementById("quantidade");
+const valor = document.getElementById("valor");
+const pagamento = document.getElementById("pagamento");
+const formulario = document.getElementById("formPedido");
+const mensagem = document.getElementById("mensagem");
+async function carregarClientes() {
+    try {
+        const resposta = await fetch("http://localhost:3000/clientes");
+        const clientes = await resposta.json();
+
+        clientes.forEach(clienteCadastrado => {
+            const opcao = document.createElement("option");
+
+            opcao.value = clienteCadastrado.id;
+            opcao.textContent = clienteCadastrado.nome;
+
+            cliente.appendChild(opcao);
+        });
+    } catch (erro) {
+        console.error("Erro ao carregar clientes:", erro);
+    }
+}
+
+carregarClientes();
+async function carregarProdutos() {
+    try {
+        const resposta = await fetch("http://localhost:3000/produtos");
+        const produtos = await resposta.json();
+
+        produtos.forEach(produtoCadastrado => {
+            const opcao = document.createElement("option");
+
+            opcao.value = produtoCadastrado.id;
+            opcao.textContent = `${produtoCadastrado.nome} - R$ ${produtoCadastrado.preco.toFixed(2)}`;
+            opcao.dataset.preco = produtoCadastrado.preco;
+
+            produto.appendChild(opcao);
+        });
+    } catch (erro) {
+        console.error("Erro ao carregar produtos:", erro);
+    }
+}
+
+carregarProdutos();
 
     function calcularTotal() {
-        const preco = Number(produto.value);
+        const opcaoSelecionada = produto.options[produto.selectedIndex];
+        const preco = Number(opcaoSelecionada.dataset.preco || 0);
         const qtd = Number(quantidade.value);
 
         const total = preco * qtd;
@@ -293,13 +331,41 @@
     produto.addEventListener("change", calcularTotal);
     quantidade.addEventListener("input", calcularTotal);
 
-    formulario.addEventListener("submit", function(event) {
+formulario.addEventListener("submit", async function(event) {
         event.preventDefault();
 
-        calcularTotal();
+    calcularTotal();
+    
+    const dadosPedido = {
+        cliente_id: Number(cliente.value),
+        produto_id: Number(produto.value),
+        quantidade: Number(quantidade.value),
+        forma_pagamento: pagamento.value
+    };
 
+    try {
+        const resposta = await fetch("http://localhost:3000/pedidos", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(dadosPedido)
+        });
+
+        const dados = await resposta.json();
+
+        if (resposta.ok) {
+            mensagem.textContent = "Pedido registrado com sucesso!";
+            mensagem.style.display = "block";
+        } else {
+            mensagem.textContent = dados.erro || "Erro ao registrar pedido.";
+            mensagem.style.display = "block";
+        }
+    } catch (erro) {
+        mensagem.textContent = "Não foi possível conectar à API.";
         mensagem.style.display = "block";
-    });
+    }
+});
 </script>
 
 </body>
