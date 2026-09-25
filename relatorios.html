@@ -232,7 +232,17 @@
         </section>
 
         <section class="box">
+<div class="filtro-periodo">
+    <label for="dataInicio">Data inicial:</label>
+    <input type="date" id="dataInicio">
 
+    <label for="dataFim">Data final:</label>
+    <input type="date" id="dataFim">
+
+    <button class="botao" onclick="gerarRelatorioPeriodo()">
+        Gerar por período
+    </button>
+</div>
             <h2>Relatório de Vendas</h2>
 
             <table>
@@ -303,6 +313,41 @@ document.getElementById("faturamentoTotal").textContent =
         console.error("Erro ao carregar relatório:", erro);
     }
 }
+async function gerarRelatorioPeriodo() {
+    const inicio = document.getElementById("dataInicio").value;
+    const fim = document.getElementById("dataFim").value;
+
+    if (!inicio || !fim) {
+        alert("Selecione a data inicial e a data final.");
+        return;
+    }
+
+    try {
+        const resposta = await fetch(
+            `http://localhost:3000/relatorios/vendas/periodo?inicio=${inicio}&fim=${fim}`
+        );
+
+        const dados = await resposta.json();
+        console.log("DADOS DO PERÍODO:", dados);
+
+        document.getElementById("totalPedidos").textContent =
+            dados.total_pedidos;
+
+        document.getElementById("vendasConfirmadas").textContent =
+            dados.vendas_confirmadas ?? 0;
+
+        document.getElementById("faturamentoTotal").textContent =
+            Number(dados.faturamento_total).toLocaleString("pt-BR", {
+                style: "currency",
+                currency: "BRL"
+            });
+
+    } catch (erro) {
+        console.error("Erro ao gerar relatório por período:", erro);
+        alert("Não foi possível gerar o relatório.");
+    }
+}
+
 
 carregarRelatorio();
 </script>
