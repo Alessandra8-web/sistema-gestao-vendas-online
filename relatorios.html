@@ -216,17 +216,17 @@
 
             <div class="card">
                 <p>Total de pedidos</p>
-                <h2>24</h2>
+                <h2 id="totalPedidos">24</h2>
             </div>
 
             <div class="card">
                 <p>Vendas confirmadas</p>
-                <h2>18</h2>
+                <h2 id="vendasConfirmadas">18</h2>
             </div>
 
             <div class="card">
                 <p>Faturamento</p>
-                <h2>R$ 2.450,00</h2>
+                <h2 id="faturamentoTotal">R$ 2.450,00</h2>
             </div>
 
         </section>
@@ -246,32 +246,9 @@
                     </tr>
                 </thead>
 
-                <tbody>
+                <tbody id="tabelaPedidos">
 
-                    <tr>
-                        <td>#001</td>
-                        <td>Maria Silva</td>
-                        <td>Caixinha Bluetooth</td>
-                        <td>R$ 120,00</td>
-                        <td class="confirmado">Confirmado</td>
-                    </tr>
-
-                    <tr>
-                        <td>#002</td>
-                        <td>João Santos</td>
-                        <td>Caixinha Pro</td>
-                        <td>R$ 150,00</td>
-                        <td class="pendente">Pendente</td>
-                    </tr>
-
-                    <tr>
-                        <td>#003</td>
-                        <td>Ana Souza</td>
-                        <td>Caixinha Mini</td>
-                        <td>R$ 89,90</td>
-                        <td class="confirmado">Confirmado</td>
-                    </tr>
-
+                    
                 </tbody>
             </table>
 
@@ -284,6 +261,53 @@
     </main>
 
 </div>
+
+<script>
+async function carregarRelatorio() {
+    try {
+        const resposta = await fetch("http://localhost:3000/relatorios/vendas");
+        const dados = await resposta.json();
+const respostaPedidos = await fetch("http://localhost:3000/pedidos");
+const pedidos = await respostaPedidos.json();
+
+const tabelaPedidos = document.getElementById("tabelaPedidos");
+
+tabelaPedidos.innerHTML = "";
+
+pedidos.forEach(pedido => {
+    const linha = document.createElement("tr");
+
+    linha.innerHTML = `
+        <td>#${String(pedido.id).padStart(3, "0")}</td>
+        <td>${pedido.cliente}</td>
+        <td>${pedido.produto}</td>
+        <td>${Number(pedido.valor_total).toLocaleString("pt-BR", {
+            style: "currency",
+            currency: "BRL"
+        })}</td>
+        <td class="${pedido.status === "Confirmado" ? "confirmado" : "pendente"}">
+            ${pedido.status}
+        </td>
+    `;
+
+    tabelaPedidos.appendChild(linha);
+});
+        document.getElementById("totalPedidos").textContent = dados.total_pedidos;
+document.getElementById("vendasConfirmadas").textContent = dados.vendas_confirmadas;
+document.getElementById("faturamentoTotal").textContent =
+    Number(dados.faturamento_total).toLocaleString("pt-BR", {
+        style: "currency",
+        currency: "BRL"
+    });
+    } catch (erro) {
+        console.error("Erro ao carregar relatório:", erro);
+    }
+}
+
+carregarRelatorio();
+</script>
+
+
 
 </body>
 </html>
